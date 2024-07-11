@@ -28,3 +28,33 @@ def ast_to_networkx(ast):
 
     add_edges(ast)
     return g, positions
+
+def generate_rpn(node):
+    output = []
+    
+    def post_order_traversal(node):
+        for child in node.children:
+            post_order_traversal(child)
+        if node.type == 'NUMBER':
+            output.append(node.value)
+        else:
+            output.append(node.type)
+    
+    post_order_traversal(node)
+    return output
+
+def generate_bytecode(rpn):
+    bytecode = []
+    for token in rpn:
+        if token.isdigit():  # Check if the token is a number
+            bytecode.append(f"PUSH {token}")
+        else:
+            if token == 'PLUS':
+                bytecode.append("ADD")
+            elif token == 'MINUS':
+                bytecode.append("SUB")
+            elif token == 'MUL':
+                bytecode.append("MUL")
+            elif token == 'DIV':
+                bytecode.append("DIV")
+    return bytecode
