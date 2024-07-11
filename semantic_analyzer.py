@@ -53,8 +53,30 @@ class SemanticAnalyzer:
         print(f"The type of the first child is {left_type}, the type of the second child is {right_type}.")
         if left_type != 'number' or right_type != 'number':
             raise Exception(f"Type error: {left_type} {node.type} {right_type}")
-        if node.children[1].type == 'NUMBER' and node.children[1].value == '0':
+        if self.is_zero(node.children[1]):
             raise Exception("Semantic error: Division by zero")
         node.data_type = 'number'
         return node.data_type
+    
+    def is_zero(self, node):
+        """ Check if a node is a zero or evaluates to zero. """
+        print(f"Checking if node is zero or evaluates to zero")
+        print(f"Node value is {node.value}")
+        if node.type == 'NUMBER' and node.value == '0':
+            print(f"This node is zero")
+            return True
+        if node.type in ('PLUS', 'MINUS', 'MUL', 'DIV'):
+            # Recursively evaluate binary operations to check if they result in zero
+            left_is_zero = self.is_zero(node.children[0])
+            right_is_zero = self.is_zero(node.children[1])
+            if node.type == 'PLUS':
+                return left_is_zero and right_is_zero
+            elif node.type == 'MINUS':
+                return left_is_zero and right_is_zero
+            elif node.type == 'MUL':
+                return left_is_zero or right_is_zero
+            elif node.type == 'DIV':
+                return left_is_zero  # We don't need to check right_is_zero because division by zero is already handled
+        print(f"This node is not zero")
+        return False
 
