@@ -10,6 +10,7 @@ class ASTNode:
         self.type = type
         self.value = value
         self.children = []
+        self.data_type = None # Used for reporting annotations from semantic analysis
 
 class Parser:
     def __init__(self, tokens):
